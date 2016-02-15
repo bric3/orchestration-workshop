@@ -1,26 +1,18 @@
-rng1:
+rng:
     build: rng
-
-rng2:
-    build: rng
-
-rng3:
-    build: rng
-
-rng0:
-    image: jpetazzo/hamba
-    links:
-        - rng1
-        - rng2
-        - rng3
-    command: 80 rng1 80 rng2 80 rng3 80
     ports:
       - "8001:80"
+    log_driver: gelf
+    log_opt:
+        gelf-address: "udp://52.28.32.96:32769"
 
 hasher:
     build: hasher
     ports:
       - "8002:80"
+    log_driver: gelf
+    log_opt:
+        gelf-address: "udp://52.28.32.96:32769"
 
 webui:
     build: webui
@@ -28,24 +20,24 @@ webui:
       - redis
     ports:
       - "80:80"
-#    volumes:
-#      - "./webui/files/:/files/"
-    extra_hosts:
-        redis: 52.28.32.96
+    volumes:
+      - "./webui/files/:/files/"
+    log_driver: gelf
+    log_opt:
+        gelf-address: "udp://52.28.32.96:32769"
 
 redis:
-    image: jpetazzo/hamba
-    command: 6379 52.28.32.96 32771
-#    image: redis
+    image: redis
+    log_driver: gelf
+    log_opt:
+        gelf-address: "udp://52.28.32.96:32769"
 
 worker:
     build: worker
     links:
-      - rng0:rng
+      - rng
       - hasher
       - redis
-    extra_hosts:
-        redis: 52.28.32.96
-
-
-
+    log_driver: gelf
+    log_opt:
+        gelf-address: "udp://52.28.32.96:32769"
