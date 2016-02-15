@@ -24,8 +24,8 @@ hasher:
 
 webui:
     build: webui
-#    links:
-#      - redis
+    links:
+      - redis
     ports:
       - "80:80"
 #    volumes:
@@ -33,7 +33,9 @@ webui:
     extra_hosts:
         redis: 52.28.32.96
 
-#redis:
+redis:
+    image: jpetazzo/hamba
+    command: 6379 52.28.32.96 32771
 #    image: redis
 
 worker:
@@ -41,7 +43,7 @@ worker:
     links:
       - rng0:rng
       - hasher
-#      - redis
+      - redis
     extra_hosts:
         redis: 52.28.32.96
 
