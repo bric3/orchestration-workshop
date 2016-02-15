@@ -7,7 +7,7 @@ rng2:
 rng3:
     build: rng
 
-rng:
+rng0:
     image: jpetazzo/hamba
     links:
         - rng1
@@ -24,20 +24,26 @@ hasher:
 
 webui:
     build: webui
-    links:
-      - redis
+#    links:
+#      - redis
     ports:
       - "80:80"
-    volumes:
-      - "./webui/files/:/files/"
+#    volumes:
+#      - "./webui/files/:/files/"
+    extra_hosts:
+        redis: 52.28.32.96
 
-redis:
-    image: redis
+#redis:
+#    image: redis
 
 worker:
     build: worker
     links:
-      - rng
+      - rng0:rng
       - hasher
-      - redis
+#      - redis
+    extra_hosts:
+        redis: 52.28.32.96
+
+
 
